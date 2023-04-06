@@ -1,0 +1,52 @@
+function float(number) {
+    let P = Math.floor(Math.log2(number));
+    let M = number / 2 ** P - 1;
+    const S = number > 0 ? 0 : 1;
+    let bits = S.toString();
+    let temp = (P + 127).toString(2).slice(0, 8);
+    while (temp.length < 8) {
+        temp = "0" + temp;
+    }
+    bits += temp;
+    temp = M.toString(2).slice(2, 23);
+    while (temp.length < 23) {
+        temp += "0";
+    }
+    bits += temp;
+    let output = "";
+    let i = 0;
+    while (i < bits.length) {
+        output += parseInt(bits.slice(i, i + 4), 2)
+            .toString(16)
+            .toUpperCase();
+        i += 4;
+    }
+    return output;
+}
+
+function defloat(hex) {
+    let bits = "";
+    let temp = "";
+    for (let i = 0; i < hex.length; ++i) {
+        temp = parseInt(hex[i], 16).toString(2);
+        bits += "0".repeat(4 - temp.length) + temp;
+    }
+    if (bits.slice(1, 9) === "1".repeat(8)) {
+        if (bits.slice(9, 32) === "0".repeat(23))
+            return bits[0] === "0" ? Infinity : -Infinity;
+        return NaN;
+    }
+    const S = bits[0] === "1" ? -1 : 1;
+    const P = parseInt(bits.slice(1, 9), 2) - 127;
+    let M = 0;
+    for (let i = 0; i < bits.slice(9).length; ++i) {
+        M += parseInt(bits.slice(9)[i], 2) * 2 ** -(i + 1);
+    }
+    //const M = "." + Math.floor(parseInt(bits.slice(9), 2) / 8.3886e-6);
+    return (S * (1 + M) * 2 ** P).toFixed(3);
+}
+
+let test = process.argv[2];
+test = float(test);
+test = defloat(test);
+console.log(test);
