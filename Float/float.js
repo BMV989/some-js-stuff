@@ -1,14 +1,16 @@
 function float(number) {
+    const S = number >= 0 ? 0 : 1;
+    number = Math.abs(number);
     let P = Math.floor(Math.log2(number));
-    let M = number / 2 ** P - 1;
-    const S = number > 0 ? 0 : 1;
+    if (P < -126) P = -127;
+    let M = P !== -127 ? number / 2 ** P - 1 : number / 2 ** -126;
     let bits = S.toString();
     let temp = (P + 127).toString(2).slice(0, 8);
     while (temp.length < 8) {
         temp = "0" + temp;
     }
     bits += temp;
-    temp = M.toString(2).slice(2, 23);
+    temp = P !== -127 ? M.toString(2).slice(2, 23) : M.toString(2).replace(".", "").slice(0, 25);
     while (temp.length < 23) {
         temp += "0";
     }
@@ -37,13 +39,14 @@ function defloat(hex) {
         return NaN;
     }
     const S = bits[0] === "1" ? -1 : 1;
-    const P = parseInt(bits.slice(1, 9), 2) - 127;
+    let P = parseInt(bits.slice(1, 9), 2) - 127;
     let M = 0;
     for (let i = 0; i < bits.slice(9).length; ++i) {
         M += parseInt(bits.slice(9)[i], 2) * 2 ** -(i + 1);
     }
+    console.log(bits)
     //const M = "." + Math.floor(parseInt(bits.slice(9), 2) / 8.3886e-6);
-    return (S * (1 + M) * 2 ** P).toFixed(3);
+    return P !== -127 ? (S * (1 + M) * 2 ** P).toFixed(39) : (S * M * 2 ** -126).toFixed(39);
 }
 
 let test = process.argv[2];
