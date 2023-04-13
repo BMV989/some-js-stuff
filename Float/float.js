@@ -44,7 +44,6 @@ function defloat(hex) {
     for (let i = 0; i < bits.slice(9).length; ++i) {
         M += parseInt(bits.slice(9)[i], 2) * 2 ** -(i + 1);
     }
-    console.log(bits)
     //const M = "." + Math.floor(parseInt(bits.slice(9), 2) / 8.3886e-6);
     return P !== -127 ? (S * (1 + M) * 2 ** P).toFixed(39) : (S * M * 2 ** -126).toFixed(39);
 }
