@@ -10,7 +10,7 @@ function float(number) {
         temp = "0" + temp;
     }
     bits += temp;
-    temp = P !== -127 ? M.toString(2).slice(2, 23) : M.toString(2).replace(".", "").slice(0, 23);
+    temp = P !== -127 ? M.toString(2).slice(2, 24) : M.toString(2).slice(2, 24);
     while (temp.length < 23) {
         temp += "0";
     }
@@ -42,10 +42,10 @@ function defloat(hex) {
     let P = parseInt(bits.slice(1, 9), 2) - 127;
     let M = 0;
     for (let i = 0; i < bits.slice(9).length; ++i) {
-        M += parseInt(bits.slice(9)[i], 2) * 2 ** -(i + 1);
+        M += bits.slice(9)[i] * 2 ** -(i + 1);
     }
     //const M = "." + Math.floor(parseInt(bits.slice(9), 2) / 8.3886e-6);
-    return P !== -127 ? (S * (1 + M) * 2 ** P).toFixed(39) : (S * M * 2 ** -126).toFixed(39);
+    return P !== -127 ? (S * (1 + M) * 2 ** P) : (S * M * 2 ** -126);
 }
 
 let test = process.argv[2];
