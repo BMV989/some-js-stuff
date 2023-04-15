@@ -10,7 +10,7 @@ function float(number) {
         temp = "0" + temp;
     }
     bits += temp;
-    temp = P !== -127 ? M.toString(2).slice(2, 24) : M.toString(2).slice(2, 24);
+    temp = M.toString(2).slice(2, 24);
     while (temp.length < 23) {
         temp += "0";
     }
