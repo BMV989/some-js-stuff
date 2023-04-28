@@ -1,3 +1,4 @@
+const fs = require("fs");
 function bruteforce(string, pattern) {
   let ans = [];
   searching: for (let i = 0; i <= string.length - pattern.length; ++i) {
@@ -38,14 +39,58 @@ function rabin_karp(string, pattern, p = 5) {
   return ans;
 }
 
-const string = "abcdcab";
-const pattern = "ab";
-const string2 = "Addabffg";
-const pattern2 = "ffg";
-const string1 = "the quick brown fox jumps over the lazy dog";
-const pattern1 = "fox";
+function DFA(pattern) {
+  const transitions = {};
+  const states = Array(pattern.length + 1)
+    .fill()
+    .map(() => new Set());
+  for (let i = 0; i <= pattern.length; i++) {
+    for (const c of new Set(pattern)) {
+      let j = Math.min(pattern.length, i + 1);
+      while (j > 0 && !pattern.slice(0, j).includes(pattern.slice(0, i) + c)) {
+        j--;
+      }
+      states[i].add([c, j]);
+    }
+    if (i < pattern.length) {
+      transitions[[i, pattern[i]]] = i + 1;
+    }
+  }
+  const acceptingStates = states.reduce((acc, state, i) => {
+    if (i === pattern.length || states[i + 1].size === 0) {
+      return acc.concat(i);
+    } else {
+      return acc;
+    }
+  }, []);
 
-console.log(rabin_karp(string, pattern));
-console.log(rabin_karp(string1, pattern1));
-console.log(rabin_karp(string2, pattern2));
-console.log(rabin_karp(string2, pattern));
+  return {
+    search: function (text) {
+      const occurrences = [];
+      let i = 0;
+      while (i < text.length) {
+        let j = 0;
+        let state = 0;
+        while (j < pattern.length && transitions[[state, text[i + j]]]) {
+          state = transitions[[state, text[i + j]]];
+          j++;
+        }
+        if (acceptingStates.includes(state)) {
+          occurrences.push(i);
+        }
+        if (j === 0) {
+          i++;
+        } else {
+          i += j;
+        }
+      }
+      return occurrences;
+    },
+  };
+}
+
+const stringText = fs.readFileSync("test.txt", "utf8");
+
+console.log(rabin_karp(stringText, "War"));
+console.log(bruteforce(stringText, "War"));
+console.log(DFA("War").search(stringText));
