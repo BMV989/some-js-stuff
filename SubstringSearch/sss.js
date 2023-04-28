@@ -39,7 +39,7 @@ function rabin_karp(string, pattern, p = 5) {
   return ans;
 }
 
-function DFA(pattern) {
+function DFA(text, pattern) {
   const transitions = {};
   const states = Array(pattern.length + 1)
     .fill()
@@ -64,33 +64,32 @@ function DFA(pattern) {
     }
   }, []);
 
-  return {
-    search: function (text) {
-      const occurrences = [];
-      let i = 0;
-      while (i < text.length) {
-        let j = 0;
-        let state = 0;
-        while (j < pattern.length && transitions[[state, text[i + j]]]) {
-          state = transitions[[state, text[i + j]]];
-          j++;
-        }
-        if (acceptingStates.includes(state)) {
-          occurrences.push(i);
-        }
-        if (j === 0) {
-          i++;
-        } else {
-          i += j;
-        }
+  const search = () => {
+    const occurrences = [];
+    let i = 0;
+    while (i < text.length) {
+      let j = 0;
+      let state = 0;
+      while (j < pattern.length && transitions[[state, text[i + j]]]) {
+        state = transitions[[state, text[i + j]]];
+        j++;
       }
-      return occurrences;
-    },
+      if (acceptingStates.includes(state)) {
+        occurrences.push(i);
+      }
+      if (j === 0) {
+        i++;
+      } else {
+        i += j;
+      }
+    }
+    return occurrences;
   };
+  return search();
 }
 
 const stringText = fs.readFileSync("test.txt", "utf8");
 
 console.log(rabin_karp(stringText, "War"));
 console.log(bruteforce(stringText, "War"));
-console.log(DFA("War").search(stringText));
+console.log(DFA(stringText, "War"));
