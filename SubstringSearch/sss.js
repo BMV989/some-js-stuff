@@ -1,4 +1,5 @@
 const fs = require("fs");
+
 function bruteforce(string, pattern) {
   let ans = [];
   searching: for (let i = 0; i <= string.length - pattern.length; ++i) {
@@ -88,8 +89,99 @@ function DFA(text, pattern) {
   return search();
 }
 
+function boyer_moore_search(text, pattern) {
+  const n = text.length;
+  const m = pattern.length;
+  if (m === 0) {
+    return [];
+  }
+
+  function buildBadCharTable(pattern) {
+    const table = new Map();
+    for (let i = 0; i < pattern.length; i++) {
+      table.set(pattern[i], i);
+    }
+    return table;
+  }
+
+  function buildGoodSuffixTable(pattern) {
+    const table = new Array(pattern.length).fill(0);
+    let lastPrefixPosition = pattern.length;
+    for (let i = pattern.length - 1; i >= 0; i--) {
+      if (isPrefix(pattern, i + 1)) {
+        lastPrefixPosition = i + 1;
+      }
+      table[pattern.length - i - 1] =
+        lastPrefixPosition - i + pattern.length - 1;
+    }
+    for (let i = 0; i < pattern.length - 1; i++) {
+      const suffixLen = getSuffixLength(pattern, i);
+      if (pattern[i - suffixLen] !== pattern[pattern.length - 1 - suffixLen]) {
+        table[pattern.length - 1 - suffixLen] = Math.min(
+          table[pattern.length - 1 - suffixLen],
+          pattern.length - 1 - i + suffixLen
+        );
+      }
+    }
+    return table;
+  }
+
+  function isPrefix(pattern, p) {
+    for (let i = p, j = 0; i < pattern.length; i++, j++) {
+      if (pattern[i] !== pattern[j]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function getSuffixLength(pattern, p) {
+    let len = 0;
+    for (
+      let i = p, j = pattern.length - 1;
+      i >= 0 && pattern[i] === pattern[j];
+      i--, j--
+    ) {
+      len++;
+    }
+    return len;
+  }
+
+  const badCharTable = buildBadCharTable(pattern);
+  const goodSuffixTable = buildGoodSuffixTable(pattern);
+
+  const occurrences = [];
+  let i = m - 1;
+  let j = m - 1;
+  while (i < n) {
+    if (text[i] === pattern[j]) {
+      if (j === 0) {
+        occurrences.push(i);
+        i += m;
+        j = m - 1;
+      } else {
+        i--;
+        j--;
+      }
+    } else {
+      const badCharIndex = badCharTable.get(text[i]);
+      const badCharShift = j - (badCharIndex === undefined ? -1 : badCharIndex);
+      const goodSuffixShift = goodSuffixTable[j];
+      i += Math.max(badCharShift, goodSuffixShift);
+      j = m - 1;
+    }
+  }
+  return occurrences;
+}
+
 const stringText = fs.readFileSync("test.txt", "utf8");
 
-console.log(rabin_karp(stringText, "War"));
-console.log(bruteforce(stringText, "War"));
+console.time("dfa");
 console.log(DFA(stringText, "War"));
+console.timeEnd("dfa");
+console.time("brute");
+console.log(bruteforce(stringText, "War"));
+console.timeEnd("brute");
+console.time("boyer");
+console.log(boyer_moore_search(stringText, "War"));
+console.timeEnd("boyer");
