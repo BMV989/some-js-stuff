@@ -89,7 +89,7 @@ function DFA(text, pattern) {
   return search();
 }
 
-function boyer_moore_search(text, pattern) {
+function boyer_moore(text, pattern) {
   const n = text.length;
   const m = pattern.length;
   if (m === 0) {
@@ -105,6 +105,27 @@ function boyer_moore_search(text, pattern) {
   }
 
   function buildGoodSuffixTable(pattern) {
+    function isPrefix(pattern, p) {
+      for (let i = p, j = 0; i < pattern.length; i++, j++) {
+        if (pattern[i] !== pattern[j]) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function getSuffixLength(pattern, p) {
+      let len = 0;
+      for (
+        let i = p, j = pattern.length - 1;
+        i >= 0 && pattern[i] === pattern[j];
+        i--, j--
+      ) {
+        len++;
+      }
+      return len;
+    }
+
     const table = new Array(pattern.length).fill(0);
     let lastPrefixPosition = pattern.length;
     for (let i = pattern.length - 1; i >= 0; i--) {
@@ -124,27 +145,6 @@ function boyer_moore_search(text, pattern) {
       }
     }
     return table;
-  }
-
-  function isPrefix(pattern, p) {
-    for (let i = p, j = 0; i < pattern.length; i++, j++) {
-      if (pattern[i] !== pattern[j]) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  function getSuffixLength(pattern, p) {
-    let len = 0;
-    for (
-      let i = p, j = pattern.length - 1;
-      i >= 0 && pattern[i] === pattern[j];
-      i--, j--
-    ) {
-      len++;
-    }
-    return len;
   }
 
   const badCharTable = buildBadCharTable(pattern);
@@ -176,12 +176,12 @@ function boyer_moore_search(text, pattern) {
 
 const stringText = fs.readFileSync("test.txt", "utf8");
 
-console.time("dfa");
+console.time("DFA");
 console.log(DFA(stringText, "War"));
-console.timeEnd("dfa");
+console.timeEnd("DFA");
 console.time("brute");
-console.log(bruteforce(stringText, "War"));
+console.log(bruteforce(stringText, "see"));
 console.timeEnd("brute");
 console.time("boyer");
-console.log(boyer_moore_search(stringText, "War"));
+console.log(boyer_moore(stringText, "see"));
 console.timeEnd("boyer");
