@@ -96,6 +96,22 @@ function boyer_moore(text, pattern) {
     return [];
   }
 
+  function buildTrueBadCharTable(pattern) {
+    const table = {};
+    const alphabet = Array.from(new Set(pattern));
+    for (const s of alphabet) {
+      table[s] = [];
+      for (let i = 0; i <= m; ++i) {
+        table[s][i] = Math.abs(i - pattern.lastIndexOf(s, i));
+      }
+    }
+    table["*"] = [];
+    for (let i = 0; i <= m; ++i) {
+      table["*"][i] = i + 1;
+    }
+    return table;
+  }
+  console.log(buildTrueBadCharTable(pattern));
   function buildBadCharTable(pattern) {
     const table = new Map();
     for (let i = 0; i < pattern.length; i++) {
@@ -113,7 +129,6 @@ function boyer_moore(text, pattern) {
       }
       return true;
     }
-
     function getSuffixLength(pattern, p) {
       let len = 0;
       for (
@@ -147,7 +162,7 @@ function boyer_moore(text, pattern) {
     return table;
   }
 
-  const badCharTable = buildBadCharTable(pattern);
+  const badCharTable = buildTrueBadCharTable(pattern);
   const goodSuffixTable = buildGoodSuffixTable(pattern);
 
   const occurrences = [];
@@ -164,8 +179,13 @@ function boyer_moore(text, pattern) {
         j--;
       }
     } else {
-      const badCharIndex = badCharTable.get(text[i]);
-      const badCharShift = j - (badCharIndex === undefined ? -1 : badCharIndex);
+      // const badCharIndex = badCharTable.get(text[i]);
+      // const badCharShift = j - (badCharIndex === undefined ? -1 : badCharIndex);
+      // bad implementation
+      const badCharShift =
+        text[i] in badCharTable
+          ? badCharTable[text[i]][j]
+          : badCharTable["*"][j];
       const goodSuffixShift = goodSuffixTable[j];
       i += Math.max(badCharShift, goodSuffixShift);
       j = m - 1;
@@ -176,12 +196,12 @@ function boyer_moore(text, pattern) {
 
 const stringText = fs.readFileSync("test.txt", "utf8");
 
-console.time("DFA");
-console.log(DFA(stringText, "War"));
-console.timeEnd("DFA");
+//console.time("DFA");
+//console.log(DFA(stringText, "War"));
+//console.timeEnd("DFA");
 console.time("brute");
-console.log(bruteforce(stringText, "see"));
+console.log(bruteforce(stringText, "War"));
 console.timeEnd("brute");
 console.time("boyer");
-console.log(boyer_moore(stringText, "see"));
+console.log(boyer_moore(stringText, "War"));
 console.timeEnd("boyer");
