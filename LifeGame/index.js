@@ -100,7 +100,6 @@ function initButtons() {
   };
   document.getElementById("stop").onclick = function() {
     running = true;
-    end = true;
     document.getElementById("step").className = "disabled";
     document.getElementById("start").className = "disabled";
   };
