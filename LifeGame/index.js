@@ -101,7 +101,6 @@ function initButtons() {
   document.getElementById("stop").onclick = function() {
     running = true;
     document.getElementById("step").className = "disabled";
-    document.getElementById("start").className = "disabled";
   };
 }
 
