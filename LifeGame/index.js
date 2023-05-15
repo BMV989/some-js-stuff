@@ -3,7 +3,6 @@ const COLS = 50;
 
 let grid = [];
 let running = false;
-let end = false;
 
 function initGrid() {
   for (let i = 0; i < ROWS; i++) {
