@@ -44,7 +44,7 @@ function getOffset(sample, cipheredMessage) {
     }
   }
   const ans = alphabet.length - bestOffset;
-  return ans === 26 ? 0 : ans;
+  return ans === alphabet.length ? 0 : ans;
 }
 
 function decipher(cipheredMessage, offset) {
