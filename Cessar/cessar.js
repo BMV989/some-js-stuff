@@ -71,3 +71,4 @@ console.log(decipher(cipher(message, trueOffset), offset));
 
 console.log(offset);
 console.log(trueOffset === offset);
+console.log(decipher(cipher(message, trueOffset), offset) === message);
