@@ -107,7 +107,7 @@ function boyer_moore(text, pattern) {
     }
     table["*"] = [];
     for (let i = 0; i <= m; ++i) {
-      table["*"][i] = i + 1;
+      table["*"][i] = i;
     }
     return table;
   }
