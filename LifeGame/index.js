@@ -109,6 +109,7 @@ function initButtons() {
     end = true;
   };
   document.getElementById("start").onclick = function() {
+    document.getElementById("start").className = "disabled";
     document.getElementById("step").className = "disabled";
     if (!running) {
       end = false;
