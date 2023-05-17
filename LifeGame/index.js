@@ -3,6 +3,7 @@ const COLS = 50;
 
 let grid = [];
 let running = false;
+let end = true;
 
 function initGrid() {
   for (let i = 0; i < ROWS; i++) {
@@ -66,6 +67,13 @@ function step() {
   document.getElementById("step").className = "";
 }
 
+async function start() {
+  while (!end) {
+    step();
+    await new Promise((r) => setTimeout(r, 100));
+  }
+}
+
 function toggleCell(row, col) {
   grid[row][col] = !grid[row][col];
   updateBoxes();
@@ -98,8 +106,15 @@ function initButtons() {
     }
   };
   document.getElementById("stop").onclick = function() {
-    running = true;
+    end = true;
+  };
+  document.getElementById("start").onclick = function() {
     document.getElementById("step").className = "disabled";
+    if (!running) {
+      end = false;
+      running = true;
+      start();
+    }
   };
 }
 
