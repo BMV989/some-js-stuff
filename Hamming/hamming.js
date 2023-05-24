@@ -21,7 +21,7 @@ function encode(binaryMessage4) {
 }
 // s0 s1 s2 d1 s3 d2 d3 d4
 
-function decode(encodedBinaryMessge8) {
+function check(encodedBinaryMessge8) {
   if (encodedBinaryMessge8.length !== 8)
     throw new Error("Can't decode this non-standard binary message");
   const s1 =
@@ -72,7 +72,7 @@ if (flag === "-e") {
   console.log(encode(message));
 }
 
-if (flag === "-d") {
-  const decodedMessage = decode(message);
-  console.log(decodedMessage);
+if (flag === "-c") {
+  const checkedMessage = check(message);
+  console.log(checkedMessage);
 }
