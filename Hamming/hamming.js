@@ -75,5 +75,4 @@ if (flag === "-e") {
 if (flag === "-d") {
   const decodedMessage = decode(message);
   console.log(decodedMessage);
-  console.log(`data: ${decodedMessage[3]}${decodedMessage.slice(5, 8)}`);
 }
