@@ -55,11 +55,11 @@ function check(encodedBinaryMessge8) {
     );
   }
   let ans = "";
-  encodedBinaryMessge8.forEach((e) => {
+  encodedBinaryMessge8.forEach((e, i) => {
     if (typeof e === "number") {
       ans += `\x1b[31m${e}\x1b[0m`;
     } else {
-      ans += e;
+      ans += [0, 1, 2, 4].includes(i) ? `\x1b[36m${e}\x1b[0m` : e;
     }
   });
   return ans;
