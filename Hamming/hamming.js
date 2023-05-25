@@ -19,7 +19,7 @@ function encode(binaryMessage4) {
     ""
   );
 }
-// s0 s1 s2 d1 s3 d2 d3 d4
+// p0 p1 p2 d1 p3 d2 d3 d4
 
 function check(encodedBinaryMessge8) {
   if (encodedBinaryMessge8.length !== 8)
@@ -73,6 +73,5 @@ if (flag === "-e") {
 }
 
 if (flag === "-c") {
-  const checkedMessage = check(message);
-  console.log(checkedMessage);
+  console.log(check(message));
 }
